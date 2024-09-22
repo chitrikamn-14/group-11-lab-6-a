@@ -55,3 +55,15 @@ void PWMConfig(void)
     PWM1_ENABLE_R |= 0x040;               // Enable PWM1 on PF2 (PWM channel 6)
 }
 
+// Main function to initialize GPIO, PWM, and set up initial duty cycle
+void main(void)
+{
+    GPIO_PORTF_setup();                   // Setup GPIO for buttons and LEDs
+    PWMConfig();                          // Setup PWM
+    duty = 50;                            // Start with 50% duty cycle
+    PWM1_3_CMPA_R = (time_period * duty) / 100; // Set initial 50% duty cycle
+
+    while(1) {
+        // Infinite loop, everything handled in interrupt handler
+    }
+}
