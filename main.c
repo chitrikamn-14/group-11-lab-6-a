@@ -67,3 +67,15 @@ void main(void)
         // Infinite loop, everything handled in interrupt handler
     }
 }
+
+// Interrupt handler for GPIO Port F (triggered by button presses)
+void GPIOFHandler(void)
+{
+    dual_switch();                        // Handle button press and adjust duty cycle
+
+    int wait;
+    for(wait = 0; wait < 1600 * 1000 / 4; wait++) {}  // Debounce delay of 0.25 seconds
+
+    GPIO_PORTF_ICR_R = 0x11;              // Clear interrupt flags for PF4 and PF0
+    GPIO_PORTF_IM_R |= 0x11;              // Re-enable interrupts for PF4 and PF0
+}
