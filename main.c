@@ -79,3 +79,30 @@ void GPIOFHandler(void)
     GPIO_PORTF_ICR_R = 0x11;              // Clear interrupt flags for PF4 and PF0
     GPIO_PORTF_IM_R |= 0x11;              // Re-enable interrupts for PF4 and PF0
 }
+
+// Logic for changing duty cycle based on button presses
+void dual_switch(void)
+{
+    GPIO_PORTF_IM_R &= ~0x11;             // Disable interrupts during duty cycle adjustment
+
+    // Check if SW2 (PF0) is pressed (duty cycle increase)
+    if(GPIO_PORTF_RIS_R & 0x10)
+    {
+        if (duty < 90) {
+            duty += del_duty;             // Increase duty cycle by 15%
+        }
+        if (duty >= 90) {
+            duty = 90;                    // Cap duty cycle at 90%
+        }
+    }
+    // Check if SW1 (PF4) is pressed (duty cycle decrease)
+    if (GPIO_PORTF_RIS_R & 0x01)
+    {
+        if (duty > 5) {
+            duty -= del_duty;             // Decrease duty cycle by 15%
+        }
+        if (duty <= 5) {
+            duty = 5;                     // Cap duty cycle at 5%
+        }
+    }
+
