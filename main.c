@@ -39,3 +39,19 @@ void GPIO_PORTF_setup(void)
     NVIC_PRI7_R &= 0xFF3FFFFF;            // Set priority for Port F interrupt
     NVIC_EN0_R |= (1 << 30);              // Enable interrupt 30 (Port F)
 }
+
+// Configure the PWM generator for 100 kHz frequency on PF2 with variable duty cycle
+void PWMConfig(void)
+{
+    SYSCTL_RCGCPWM_R |= (1 << 1);         // Enable clock for PWM1
+    GPIO_PORTF_AFSEL_R |= (1 << 2);       // Enable alternate function for PF2 (PWM output)
+    GPIO_PORTF_PCTL_R |= 0x500;           // Configure PF2 as PWM output
+
+    PWM1_3_CTL_R = 0x00;                  // Disable PWM generator 3 while configuring
+    PWM1_3_GENA_R = 0x8C;                 // Set PWM3A for a down-counting PWM signal
+    PWM1_3_LOAD_R = 160;                  // Set period for 100 kHz PWM (time_period = 160)
+    PWM1_3_CMPA_R = (duty / 100) * time_period - 1; // Set initial duty cycle
+    PWM1_3_CTL_R |= 0x01;                 // Enable PWM generator 3
+    PWM1_ENABLE_R |= 0x040;               // Enable PWM1 on PF2 (PWM channel 6)
+}
+
