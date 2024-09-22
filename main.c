@@ -106,3 +106,10 @@ void dual_switch(void)
         }
     }
 
+// If both switches are pressed, maintain current duty cycle
+    if (GPIO_PORTF_RIS_R & 0x11) {
+        duty = duty;                      // Do nothing, maintain the same duty cycle
+    }
+
+    PWM1_3_CMPA_R = (time_period * duty) / 100;  // Update PWM duty cycle
+}
